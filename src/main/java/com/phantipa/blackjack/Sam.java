@@ -7,7 +7,7 @@ public class Sam extends Player {
     }
 
     @Override
-    public boolean shouldStop() {
+    public boolean mustStop() {
         if (getValue() < 17) {
             return false;
         }

@@ -14,18 +14,26 @@ public class Blackjack {
     private static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
     private List<Card> cards;
 
+    public Blackjack() {
+    }
+
     public Blackjack(List<Card> cards) {
         this.cards = cards;
     }
 
     public static void main(String args[]) {
-        List<Card> cards = prepareCards(args);
-        Blackjack bj = new Blackjack(cards);
-        bj.process();
-        System.out.println();
+        try {
+            List<Card> cards = prepareCards(args);
+            Blackjack bj = new Blackjack(cards);
+            bj.process();
+            System.out.println();
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not found.");
+        }
+
     }
 
-    public static List<Card> prepareCards(String[] args) {
+    public static List<Card> prepareCards(String[] args) throws FileNotFoundException {
         List<Card> cards = new ArrayList<>();
 
         if (args.length > 0) {
@@ -38,9 +46,6 @@ public class Blackjack {
                     if (sb.length() > 0)
                         break;
                 }
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found.");
-                System.exit(1);
             }
 
             //TODO Validate invalid cards
@@ -68,12 +73,12 @@ public class Blackjack {
         int cardIdx = 4;
 
         Sam sam = new Sam(cards.get(0), cards.get(2));
-        while (!sam.shouldStop()) {
+        while (!sam.mustStop()) {
             sam.addCard(cards.get(cardIdx++));
         }
 
         Dealer dealer = new Dealer(cards.get(1), cards.get(3), sam);
-        while (!dealer.shouldStop()) {
+        while (!dealer.mustStop()) {
             dealer.addCard(cards.get(cardIdx++));
         }
 

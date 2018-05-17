@@ -10,7 +10,7 @@ public class Dealer extends Player{
     }
 
     @Override
-    public boolean shouldStop(){
+    public boolean mustStop(){
         if (isBJ() || isAA() || sam.isBJ() || sam.getValue() > 21) {
             return true;
         }

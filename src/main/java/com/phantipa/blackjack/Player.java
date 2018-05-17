@@ -52,5 +52,5 @@ abstract class Player {
         return aa;
     }
 
-    public abstract boolean shouldStop();
+    public abstract boolean mustStop();
 }
