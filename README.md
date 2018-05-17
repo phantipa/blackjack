@@ -1,10 +1,10 @@
-# blackjack
+# Blackjack
 
-## How to run Backjack?
+## How to run Blackjack?
     $ mvn clean install
     $ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main 
 
-## How to test Backjack with command line argument
+## How to test Blackjack with command line argument
 - Test to read a file containing a deck of cards.
 
 		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main test.txt 
