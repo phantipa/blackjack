@@ -1,19 +1,17 @@
 package com.phantipa.blackjack;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.jupiter.api.*;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BlackjackTest {
+
+    private static final String[] SUITS = {"C", "D", "H", "S"};
+    private static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
     @Nested
     @DisplayName("Tests for the method findWinner")
@@ -72,12 +70,19 @@ class BlackjackTest {
     @Nested
     @DisplayName("Tests for input validation")
     class CardInit {
+
+        String[] str;
+
+        @BeforeEach()
+        void initStringArg(){
+            str = new String[1];
+        }
+
         @DisplayName("The game should be able to read a file containing a deck of cards, " +
                 "taking the reference to the file as a command line argument, as a starting point.")
         @Test
         void prepareCards_InvalidFile_ExitProgram() throws FileNotFoundException {
-            String[] str = new String[1];
-            str[0] = "test.txt";
+            str[0] = "test_bj.txt";
 
             List<Card> cards = Blackjack.prepareCards(str);
 
@@ -94,87 +99,105 @@ class BlackjackTest {
             assertEquals(52, cards.size());
         }
 
+
         @Test
         void prepareCards_InvalidFile_ThrowFileNotFound() {
-            String[] str = new String[1];
-            str[0] = "InvalidFileName.txt";
+            str[0] = "invalid_file_name";
 
             assertThrows(FileNotFoundException.class,
-                    () -> {
-                        Blackjack.prepareCards(str);
-                    });
-        }
-
-        @Test
-        void prepareCards_CreateCardArrFail_ThrowIndexOutOfBoundsException() {
-            String[] str = new String[1];
-            str[0] = "testbadcard.txt";
-
-            assertThrows(IndexOutOfBoundsException.class,
-                    () -> {
-                        testInputBadCard(str);
-                    });
-        }
-
-        @Test
-        void prepareCards_Duplicate_ThrowIndexOutOfBoundsException() {
-            String[] str = new String[1];
-            str[0] = "testbadcard_duplicate.txt";
-
-            assertThrows(IndexOutOfBoundsException.class,
-                    () -> {
-                        testInputBadCard(str);
-                    });
+                    () -> Blackjack.prepareCards(str));
         }
 
         @Test
         void prepareCards_Missing_ThrowIndexOutOfBoundsException() {
-            String[] str = new String[1];
-            str[0] = "testbadcard_missing.txt";
+            str[0] = "test_invalid_missing.txt";
 
             assertThrows(IndexOutOfBoundsException.class,
-                    () -> {
-                        testInputBadCard(str);
-                    });
+                    () -> Blackjack.prepareCards(str));
         }
 
-        private void testInputBadCard(String[] str) throws FileNotFoundException {
-            List<Card> cards = Blackjack.prepareCards(str);
-            Blackjack bj = new Blackjack(cards);
-            bj.process();
+        @Ignore
+        @Test
+        void prepareCards_Duplicate_ThrowIndexOutOfBoundsException() {
+            str[0] = "test_invalid_duplicate.txt";
+            String[] cardsArr = generateCardsArr();
+            cardsArr[0] = "CA";
+            cardsArr[1] = "CA";
+
+            assertFalse(Blackjack.isValidCards(cardsArr));
         }
 
+        @Test
+        void prepareCards_CreateCardArrFail(){
+            str[0] = "test_invalid.txt";
+
+            String[] cardsArr = generateCardsArr();
+            cardsArr[0] = "XX";
+
+            assertFalse(Blackjack.isValidCards(cardsArr));
+        }
+
+        private String[] generateCardsArr(){
+            String[] cards = new String[52];
+            int i = 0;
+            for (String s : SUITS) {
+                for (String v : VALUES) {
+                    cards[i]=s+v;
+                    i++;
+                }
+            }
+            return cards;
+        }
     }
 
     @Nested
-    @DisplayName("Tests for the method Player.mustStop")
-    class StopDrawingRule {
-        @DisplayName("Sam must stop drawing cards from the deck if their total reaches 17 or higher")
-        @Test
-        void mustStop_SamReach17_True() {
-            Sam sam = new Sam(new Card("D10"), new Card("H7"));
-            assertTrue(sam.mustStop());
+    @DisplayName("Tests with input file")
+    class BlackjackWithFile {
+
+        String[] str;
+
+        @BeforeEach()
+        void initStringArg(){
+            str = new String[1];
         }
 
         @Test
-        void mustStop_SamLowerThan17_False() {
-            Sam sam = new Sam(new Card("D10"), new Card("H6"));
-            assertFalse(sam.mustStop());
-        }
+        void testWithFile_BJ() throws FileNotFoundException {
+            str[0] = "test_bj.txt";
+            Player winner = testWithInputFile(str).getWinner();
 
-        @DisplayName("Dealer must stop drawing cards when their total is higher than sam.")
-        @Test
-        void mustStop_DealerHigherThanSam_True() {
-            Sam sam = new Sam(new Card("D10"), new Card("D7"));
-            Dealer dealer = new Dealer(new Card("C10"), new Card("C8"), sam);
-            assertTrue(dealer.mustStop());
+            assertEquals("sam: DA, H10", winner.showCards());
         }
 
         @Test
-        void mustStop_DealerLowerThanSam_False() {
-            Sam sam = new Sam(new Card("D10"), new Card("D7"));
-            Dealer dealer = new Dealer(new Card("C10"), new Card("C6"), sam);
-            assertFalse(dealer.mustStop());
+        void testWithFile_AA() throws FileNotFoundException {
+            str[0] = "test_aa.txt";
+            Player winner = testWithInputFile(str).getWinner();
+
+            assertEquals("dealer: CA, HA", winner.showCards());
+        }
+
+        @Test
+        void testWithFile_SamWin() throws FileNotFoundException {
+            str[0] = "test_samwin.txt";
+            Player winner = testWithInputFile(str).getWinner();
+
+            assertEquals("sam: C8, S5, C7", winner.showCards());
+        }
+
+        @Test
+        void testWithFile_DealerWin() throws FileNotFoundException {
+            str[0] = "test_dealerwin.txt";
+            Player winner = testWithInputFile(str).getWinner();
+
+            assertEquals("dealer: C5, C2, C3, S3, S7", winner.showCards());
+        }
+
+        private Blackjack testWithInputFile(String[] str) throws FileNotFoundException {
+            List<Card> cards = Blackjack.prepareCards(str);
+            Blackjack bj = new Blackjack(cards);
+            bj.process();
+            return bj;
         }
     }
 

@@ -12,7 +12,7 @@ public class Card {
             value = Integer.parseInt(symbol);
         } catch (NumberFormatException ex) {
             if (symbol.length()==1){
-                if (symbol.equalsIgnoreCase("A")) {
+                if (symbol.equals("A")) {
                     value = 11;
                 } else {
                     value = 10;

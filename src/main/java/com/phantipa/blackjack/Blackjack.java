@@ -14,7 +14,9 @@ public class Blackjack {
     private static final String CARD_PATTERN_REGEX = "^[CDHS]+([2-9]|[1][0]|[JQKA])";
     private static final String[] SUITS = {"C", "D", "H", "S"};
     private static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+    public static final int CARDS_SIZE = 52;
     private List<Card> cards;
+    private Player winner;
 
     public Blackjack() {
     }
@@ -35,7 +37,7 @@ public class Blackjack {
         }
     }
 
-    public static List<Card> prepareCards(String[] args) throws FileNotFoundException {
+    public static List<Card> prepareCards(String[] args) throws FileNotFoundException, IndexOutOfBoundsException {
         List<Card> cards = new ArrayList<>();
 
         if (args.length > 0) {
@@ -69,14 +71,12 @@ public class Blackjack {
             Collections.shuffle(cards);
         }
 
+        cards.get(CARDS_SIZE-1); //if cards size != 52 throw IndexOutOfBoundsException
+
         return cards;
     }
 
     public static boolean isValidCards(String[] cardTexts) {
-        //check cards total
-        if (cardTexts.length != 52) {
-            return false;
-        } else {
             HashSet<String> set = new HashSet<>();
 
             for (String card : cardTexts) {
@@ -84,7 +84,6 @@ public class Blackjack {
                 if (!card.matches(CARD_PATTERN_REGEX) || (!set.add(card)))
                     return false;
             }
-        }
 
         return true;
     }
@@ -102,15 +101,15 @@ public class Blackjack {
             dealer.addCard(cards.get(cardIdx++));
         }
 
-        Player winner = findWinner(sam, dealer);
+        this.winner = findWinner(sam, dealer);
 
-        renderResult(winner, sam, dealer);
+        renderResult(sam, dealer);
     }
 
-    public void renderResult(Player winner, Player sam, Player dealer) {
+    public void renderResult(Player sam, Player dealer) {
         System.out.println(winner.getName());
-        sam.showCards();
-        dealer.showCards();
+        System.out.println(sam.showCards());
+        System.out.println(dealer.showCards());
     }
 
     public Player findWinner(Player sam, Player dealer) {
@@ -126,6 +125,10 @@ public class Blackjack {
         }
 
         return sam;
+    }
+
+    public Player getWinner(){
+        return winner;
     }
 
 }

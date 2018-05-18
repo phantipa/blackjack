@@ -5,12 +5,12 @@
     $ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main [FILE_NAME] 
 
 ### Some happy files for testing
-    test.txt
-    testbj.txt #both players starts with Blackjack, A + [10, J, Q, K]
-    testaa.txt #both players starts with 22 (A + A)
+    test_bj.txt #both players starts with Blackjack, A + [10, J, Q, K]
+    test_aa.txt #both players starts with 22 (A + A)
+    test_samwin.txt
+    test_dealerwin.txt
     
 ### Some bad files for testing   
-    testbadcard.txt
-    testbadcard_duplicate.txt
-    testbadcard_missing.txt
-
+    test_invalid.txt
+    test_invalid_duplicate.txt
+    test_invalid_missing.txt

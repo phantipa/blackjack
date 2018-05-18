@@ -25,14 +25,15 @@ abstract class Player {
         return name;
     }
 
-    public void showCards() {
+    public String showCards() {
         StringBuffer sb = new StringBuffer();
         sb.append(name).append(":");
         for(Card card : cards) {
             sb.append(" ").append(card.getText()).append(",");
         }
         sb.deleteCharAt(sb.length()-1);
-        System.out.println(sb.toString());
+
+        return sb.toString();
     }
 
     public void addCard(Card card) {
