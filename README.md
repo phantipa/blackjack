@@ -1,8 +1,8 @@
 # Blackjack
 
 ## How to run Blackjack?
-    $ mvn clean install
-    $ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main [FILE_NAME] 
+    $ mvn clean install    
+    $ java -jar target/blackjack-1.0.jar [FILE_NAME]
 
 ### Some happy files for testing
     test_bj.txt #both players starts with Blackjack, A + [10, J, Q, K]
