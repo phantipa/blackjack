@@ -1,1 +1,1 @@
-CA, DA, HA, SA
+DA, CA, SA, HA, D5, S3, DK, C5, H10, S7, S10, D9, S8, SK, H3, CJ, D2, D7, SQ, S2, H4, D10, DQ, C7, D4, H6, CQ, S4, S5, H7, DJ, SJ, C4, S6, H8, C8, H9, H5, C2, C6, HQ, C9, C10, HK, HJ, D3, H2, D8, C3, S9, CK, D6

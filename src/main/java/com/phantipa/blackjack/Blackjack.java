@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
 public class Blackjack {
 
     private static final String COMMA_REGEX = "\\s*,\\s*";
+    private static final String CARD_PATTERN_REGEX = "^[CDHS]+([2-9]|[1][0]|[JQKA])";
     private static final String[] SUITS = {"C", "D", "H", "S"};
     private static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
     private List<Card> cards;
@@ -26,11 +28,11 @@ public class Blackjack {
             List<Card> cards = prepareCards(args);
             Blackjack bj = new Blackjack(cards);
             bj.process();
-            System.out.println();
         } catch (FileNotFoundException ex) {
             System.out.println("File not found.");
+        } catch (IndexOutOfBoundsException ex) {
+            System.out.println("Invalid input file.");
         }
-
     }
 
     public static List<Card> prepareCards(String[] args) throws FileNotFoundException {
@@ -48,12 +50,13 @@ public class Blackjack {
                 }
             }
 
-            //TODO Validate invalid cards
             String[] cardTexts = sb.toString().split(COMMA_REGEX);
 
-            for (String text : cardTexts) {
-                Card c = new Card(text);
-                cards.add(c);
+            if (isValidCards(cardTexts)) {
+                for (String text : cardTexts) {
+                    Card c = new Card(text);
+                    cards.add(c);
+                }
             }
 
         } else {
@@ -69,7 +72,24 @@ public class Blackjack {
         return cards;
     }
 
-    public void process() {
+    public static boolean isValidCards(String[] cardTexts) {
+        //check cards total
+        if (cardTexts.length != 52) {
+            return false;
+        } else {
+            HashSet<String> set = new HashSet<>();
+
+            for (String card : cardTexts) {
+                //check card pattern and duplicate
+                if (!card.matches(CARD_PATTERN_REGEX) || (!set.add(card)))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void process() throws IndexOutOfBoundsException {
         int cardIdx = 4;
 
         Sam sam = new Sam(cards.get(0), cards.get(2));

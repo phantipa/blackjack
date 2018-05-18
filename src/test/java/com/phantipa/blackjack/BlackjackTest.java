@@ -70,7 +70,7 @@ class BlackjackTest {
     }
 
     @Nested
-    @DisplayName("Tests for the method prepareCards")
+    @DisplayName("Tests for input validation")
     class CardInit {
         @DisplayName("The game should be able to read a file containing a deck of cards, " +
                 "taking the reference to the file as a command line argument, as a starting point.")
@@ -94,7 +94,6 @@ class BlackjackTest {
             assertEquals(52, cards.size());
         }
 
-        @DisplayName("If the file is invalid or not exist, throw FileNotFoundException.")
         @Test
         void prepareCards_InvalidFile_ThrowFileNotFound() {
             String[] str = new String[1];
@@ -105,6 +104,46 @@ class BlackjackTest {
                         Blackjack.prepareCards(str);
                     });
         }
+
+        @Test
+        void prepareCards_CreateCardArrFail_ThrowIndexOutOfBoundsException() {
+            String[] str = new String[1];
+            str[0] = "testbadcard.txt";
+
+            assertThrows(IndexOutOfBoundsException.class,
+                    () -> {
+                        testInputBadCard(str);
+                    });
+        }
+
+        @Test
+        void prepareCards_Duplicate_ThrowIndexOutOfBoundsException() {
+            String[] str = new String[1];
+            str[0] = "testbadcard_duplicate.txt";
+
+            assertThrows(IndexOutOfBoundsException.class,
+                    () -> {
+                        testInputBadCard(str);
+                    });
+        }
+
+        @Test
+        void prepareCards_Missing_ThrowIndexOutOfBoundsException() {
+            String[] str = new String[1];
+            str[0] = "testbadcard_missing.txt";
+
+            assertThrows(IndexOutOfBoundsException.class,
+                    () -> {
+                        testInputBadCard(str);
+                    });
+        }
+
+        private void testInputBadCard(String[] str) throws FileNotFoundException {
+            List<Card> cards = Blackjack.prepareCards(str);
+            Blackjack bj = new Blackjack(cards);
+            bj.process();
+        }
+
     }
 
     @Nested

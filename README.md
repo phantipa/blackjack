@@ -2,26 +2,15 @@
 
 ## How to run Blackjack?
     $ mvn clean install
-    $ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main 
+    $ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main [FILE_NAME] 
 
-## How to test Blackjack with command line argument
-- Test to read a file containing a deck of cards.
-
-		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main test.txt 
-
-- Test existing file with Blackjack value, Sam win.
-
-		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main testbj.txt 
-
-- Test existing file with AA value, Dealer win.
-
-		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main testaa.txt 
-
-- Test invalid filename or not exist file. Expected output is “File not found.”
-
-		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main AnInvalidFileName
-
-- Test no file provide,a new shuffled deck of 52 unique cards should be initialized.
-
-		$ java -cp target/blackjack-1.0-SNAPSHOT.jar com.phantipa.blackjack.Main
+### Some happy files for testing
+    test.txt
+    testbj.txt #both players starts with Blackjack, A + [10, J, Q, K]
+    testaa.txt #both players starts with 22 (A + A)
+    
+### Some bad files for testing   
+    testbadcard.txt
+    testbadcard_duplicate.txt
+    testbadcard_missing.txt
 
