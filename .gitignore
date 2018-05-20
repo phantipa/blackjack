@@ -12,3 +12,6 @@ target/
 /.settings/
 /.project
 /bin/
+
+# Diagram
+*.ucls
