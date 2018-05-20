@@ -18,7 +18,7 @@ public class Blackjack {
     private static Player winner;
 
     /**
-     * This method presented summary of Backjack including input, process and output.
+     * This method presented summary of Blackjack including input, process and output.
      */
     public static void main(String args[]) {
         try {
@@ -69,7 +69,7 @@ public class Blackjack {
             File file = new File(args[0]);
             StringBuilder sb = new StringBuilder();
 
-            try (Scanner sc = new Scanner(file)) {
+            try (Scanner sc = new Scanner(file,"UTF-8")) {
                 while (sc.hasNextLine()) {
                     sb.append(sc.nextLine());
                     if (sb.length() > 0)
@@ -96,7 +96,9 @@ public class Blackjack {
             Collections.shuffle(cards);
         }
 
-        cards.get(CARDS_SIZE-1);
+        if (cards.size() != CARDS_SIZE) {
+            throw new IndexOutOfBoundsException();
+        }
 
         return cards;
     }

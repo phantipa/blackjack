@@ -1,6 +1,5 @@
 package com.phantipa.blackjack;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +22,7 @@ class BlackjackTest {
 
     @Nested
     @DisplayName("Tests for method process with input file")
-    class BlackjackProcess {
+    class BlackjackProcessTest {
 
         String[] fileName = new String[1];
         Blackjack bj = new Blackjack();
@@ -79,7 +78,7 @@ class BlackjackTest {
 
     @Nested
     @DisplayName("Tests for the method findWinner")
-    class RuleToBeWinner {
+    class RuleToBeWinnerTest {
 
         Blackjack bj = new Blackjack();
 
@@ -135,7 +134,7 @@ class BlackjackTest {
 
     @Nested
     @DisplayName("Tests for input file validation")
-    class CardInitial {
+    class CardInitialTest {
 
         String[] str;
 
@@ -181,7 +180,6 @@ class BlackjackTest {
                     () -> Blackjack.prepareCards(str));
         }
 
-        @Ignore
         @Test
         void prepareCards_Duplicate_ThrowIndexOutOfBoundsException() {
             str[0] = "test_invalid_duplicate.txt";
