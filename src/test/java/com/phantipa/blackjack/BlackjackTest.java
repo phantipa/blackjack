@@ -25,7 +25,28 @@ class BlackjackTest {
     class BlackjackProcessTest {
 
         String[] fileName = new String[1];
-        Blackjack bj = new Blackjack();
+
+        @Test
+        void testWithBJ_OnlySam_ThenSamWin() throws FileNotFoundException {
+            fileName[0] = "test_bj_onlysam.txt";
+
+            String expectedOutput = "sam\n" +
+                    "sam: DA, DK \n" +
+                    "dealer: H10, D10";
+
+            assertEquals(expectedOutput, Blackjack.process(fileName));
+        }
+
+        @Test
+        void testWithBJ_OnlyDealer_ThenDealerWin() throws FileNotFoundException {
+            fileName[0] = "test_bj_onlydealer.txt";
+
+            String expectedOutput = "dealer\n" +
+                    "sam: H10, D10 \n" +
+                    "dealer: DA, DK";
+
+            assertEquals(expectedOutput, Blackjack.process(fileName));
+        }
 
         @Test
         void testWithBJ_ThenSamWin() throws FileNotFoundException {
@@ -35,8 +56,7 @@ class BlackjackTest {
                     "sam: DA, H10 \n" +
                     "dealer: SA, CJ";
 
-            assertEquals(expectedOutput, bj.process(fileName));
-            assertEquals(SAM, bj.getWinner().getName());
+            assertEquals(expectedOutput, Blackjack.process(fileName));            
         }
 
         @Test
@@ -47,8 +67,18 @@ class BlackjackTest {
                     "sam: DA, SA \n" +
                     "dealer: CA, HA";
 
-            assertEquals(expectedOutput, bj.process(fileName));
-            assertEquals(DEALER, bj.getWinner().getName());
+            assertEquals(expectedOutput, Blackjack.process(fileName));
+        }
+
+        @Test
+        void testWithFileAA_OnlyDealer_ThenSamWin() throws FileNotFoundException {
+            fileName[0] = "test_aa_onlydealer.txt";
+
+            String expectedOutput = "sam\n" +
+                    "sam: H10, D10 \n" +
+                    "dealer: SA, DA";
+
+            assertEquals(expectedOutput, Blackjack.process(fileName));
         }
 
         @Test
@@ -59,8 +89,7 @@ class BlackjackTest {
                     "sam: C8, S5, C7 \n" +
                     "dealer: S8, DK, S6";
 
-            assertEquals(expectedOutput, bj.process(fileName));
-            assertEquals(SAM, bj.getWinner().getName());
+            assertEquals(expectedOutput, Blackjack.process(fileName));
         }
 
         @Test
@@ -71,8 +100,7 @@ class BlackjackTest {
                     "sam: CA, C7 \n" +
                     "dealer: C5, C2, C3, S3, S7";
 
-            assertEquals(expectedOutput, bj.process(fileName));
-            assertEquals(DEALER, bj.getWinner().getName());
+            assertEquals(expectedOutput, Blackjack.process(fileName));
         }
     }
 
@@ -80,24 +108,40 @@ class BlackjackTest {
     @DisplayName("Tests for the method findWinner")
     class RuleToBeWinnerTest {
 
-        Blackjack bj = new Blackjack();
-
-        @DisplayName("Sam wins when both players starts with Blackjack")
+        @DisplayName("Sam wins when he starts with Blackjack and Dealer gets lower than Sam")
         @Test
         void findWinner_BJ_SamWin() {
             Sam sam = new Sam(new Card("DA"), new Card("H10"));
+            Dealer dealer = new Dealer(new Card("SA"), new Card("C9"), sam);
+
+            assertEquals(sam, Blackjack.findWinner(sam, dealer));
+        }
+
+        @DisplayName("Dealer wins when he starts with Blackjack and Sam gets lower than Dealer")
+        @Test
+        void findWinner_BJ_DealerWin() {
+            Sam sam = new Sam(new Card("DA"), new Card("H9"));
+            Dealer dealer = new Dealer(new Card("SA"), new Card("C10"), sam);
+
+            assertEquals(dealer, Blackjack.findWinner(sam, dealer));
+        }
+
+        @DisplayName("Sam wins when both players starts with Blackjack")
+        @Test
+        void findWinner_BothBJ_SamWin() {
+            Sam sam = new Sam(new Card("DA"), new Card("H10"));
             Dealer dealer = new Dealer(new Card("SA"), new Card("CJ"), sam);
 
-            assertEquals(sam, bj.findWinner(sam, dealer));
+            assertEquals(sam, Blackjack.findWinner(sam, dealer));
         }
 
         @DisplayName("Dealer wins when both players starts with 22 (A + A)")
         @Test
-        void findWinner_AA_DealerWin() {
+        void findWinner_BothAA_DealerWin() {
             Sam sam = new Sam(new Card("CA"), new Card("HA"));
             Dealer dealer = new Dealer(new Card("DA"), new Card("SA"), sam);
 
-            assertEquals(dealer, bj.findWinner(sam, dealer));
+            assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
 
         @DisplayName("Sam has lost the game if their total is higher than 21")
@@ -106,7 +150,7 @@ class BlackjackTest {
             Sam sam = new Sam(new Card("SA"), new Card("HA"));
             Dealer dealer = new Dealer(new Card("DA"), new Card("C2"), sam);
 
-            assertEquals(dealer, bj.findWinner(sam, dealer));
+            assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
 
         @DisplayName("Dealer has lost the game if their total is higher than 21")
@@ -115,7 +159,7 @@ class BlackjackTest {
             Sam sam = new Sam(new Card("SA"), new Card("H10"));
             Dealer dealer = new Dealer(new Card("DA"), new Card("CA"), sam);
 
-            assertEquals(sam, bj.findWinner(sam, dealer));
+            assertEquals(sam, Blackjack.findWinner(sam, dealer));
         }
 
         @DisplayName("Determine which player wins the game (highest score wins)")
@@ -127,7 +171,7 @@ class BlackjackTest {
 
             Dealer dealer = new Dealer(new Card("D9"), new Card("HQ"), sam);
 
-            assertEquals(dealer, bj.findWinner(sam, dealer));
+            assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
 
     }
