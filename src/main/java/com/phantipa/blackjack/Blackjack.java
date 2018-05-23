@@ -40,15 +40,17 @@ public class Blackjack {
     public static String process(String args[]) throws FileNotFoundException, InvalidCardException {
         List<Card> cards = prepareCards(args);
 
-        //Sam turn
+        //First round
         int cardIdx = 4;
         Sam sam = new Sam(cards.get(0), cards.get(2));
-        while (!sam.mustStop()) {
+        Dealer dealer = new Dealer(cards.get(1), cards.get(3), sam);
+
+        //Sam turn
+        while (!sam.mustStop() && !dealer.isBJ()) {
             sam.addCard(cards.get(cardIdx++));
         }
 
         //Dealer turn
-        Dealer dealer = new Dealer(cards.get(1), cards.get(3), sam);
         while (!dealer.mustStop()) {
             dealer.addCard(cards.get(cardIdx++));
         }

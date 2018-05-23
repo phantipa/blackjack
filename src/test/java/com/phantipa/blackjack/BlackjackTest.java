@@ -36,7 +36,16 @@ class BlackjackTest {
             assertEquals(expectedOutput, Blackjack.process(fileName));
         }
 
-        //TODO testWithBJ_OnlyDealer_ThenDealerWin()
+        @Test
+        void testWithBJ_OnlyDealer_ThenDealerWin() throws FileNotFoundException, InvalidCardException {
+            fileName[0] = "test_bj_onlydealer.txt";
+
+            String expectedOutput = "dealer\n" +
+                    "sam: S2, C2 \n" +
+                    "dealer: DK, SA";
+
+            assertEquals(expectedOutput, Blackjack.process(fileName));
+        }
 
         @Test
         void testWithBJ_ThenSamWin() throws FileNotFoundException, InvalidCardException {
