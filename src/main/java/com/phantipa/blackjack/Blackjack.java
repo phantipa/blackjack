@@ -26,8 +26,8 @@ public class Blackjack {
             System.out.println(output);
         } catch (FileNotFoundException ex) {
             System.out.println("File not found.");
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println("Invalid input file.");
+        } catch (InvalidCardException ex) {
+            System.out.println(ex.toString());
         }
     }
 
@@ -37,7 +37,7 @@ public class Blackjack {
      * each player is given two cards from the top of a shuffled deck of cards.
      * Cards are given in the following order: [sam, dealer, sam, dealer]
      */
-    public static String process(String args[]) throws FileNotFoundException, IndexOutOfBoundsException {
+    public static String process(String args[]) throws FileNotFoundException, InvalidCardException {
         List<Card> cards = prepareCards(args);
 
         //Sam turn
@@ -59,61 +59,75 @@ public class Blackjack {
 
     /**
      * This method used for reading file and convert file to List<Card>
+     *
      * @throws FileNotFoundException if the file does not exist
-     * @throws IndexOutOfBoundsException if cards size != 52
+     * @throws InvalidCardException  if cards size != 52
      */
-    public static List<Card> prepareCards(String[] args) throws FileNotFoundException, IndexOutOfBoundsException {
+    public static List<Card> prepareCards(String[] args) throws FileNotFoundException, InvalidCardException {
         List<Card> cards = new ArrayList<>();
 
         if (args.length > 0) {
             File file = new File(args[0]);
             StringBuilder sb = new StringBuilder();
 
-            try (Scanner sc = new Scanner(file,"UTF-8")) {
-                while (sc.hasNextLine()) {
-                    sb.append(sc.nextLine());
-                    if (sb.length() > 0)
-                        break;
-                }
-            }
+            readInputFile(file, sb);
 
             String[] cardTexts = sb.toString().split(COMMA_REGEX);
 
-            if (isValidCards(cardTexts)) {
-                for (String text : cardTexts) {
-                    Card c = new Card(text);
-                    cards.add(c);
-                }
-            }
+            createValidCards(cards, cardTexts);
 
         } else {
-            for (String s : SUITS) {
-                for (String v : VALUES) {
-                    Card c = new Card(s + v);
-                    cards.add(c);
-                }
-            }
-            Collections.shuffle(cards);
+            generateShuffledCards(cards);
         }
 
         if (cards.size() != CARDS_SIZE) {
-            throw new IndexOutOfBoundsException();
+            throw new InvalidCardException("Cards size is not equal 52.", CardErrorCode.CARD_MISSING);
         }
 
         return cards;
     }
 
+    private static void generateShuffledCards(List<Card> cards) {
+        for (String s : SUITS) {
+            for (String v : VALUES) {
+                Card c = new Card(s + v);
+                cards.add(c);
+            }
+        }
+        Collections.shuffle(cards);
+    }
+
+    private static void readInputFile(File file, StringBuilder sb) throws FileNotFoundException {
+        try (Scanner sc = new Scanner(file, "UTF-8")) {
+            while (sc.hasNextLine()) {
+                sb.append(sc.nextLine());
+                if (sb.length() > 0)
+                    break;
+            }
+        }
+    }
+
+    private static void createValidCards(List<Card> cards, String[] cardTexts) throws InvalidCardException {
+        if (isValidCards(cardTexts)) {
+            for (String text : cardTexts) {
+                cards.add(new Card(text));
+            }
+        }
+    }
+
     /**
      * This method used for validating cards.
      */
-    public static boolean isValidCards(String[] cardTexts) {
-            HashSet<String> set = new HashSet<>();
+    public static boolean isValidCards(String[] cardTexts) throws InvalidCardException {
+        HashSet<String> set = new HashSet<>();
 
-            for (String card : cardTexts) {
-                //check card pattern and duplicate
-                if (!card.matches(CARD_PATTERN_REGEX) || (!set.add(card)))
-                    return false;
+        for (String card : cardTexts) {
+            if (!card.matches(CARD_PATTERN_REGEX)) {
+                throw new InvalidCardException("Found format mismatch card: " + card, CardErrorCode.CARD_MISMATCH);
+            } else if (!set.add(card)) {
+                throw new InvalidCardException("Found duplicate cards: " + card, CardErrorCode.CARD_DUPLICATE);
             }
+        }
 
         return true;
     }
@@ -127,11 +141,11 @@ public class Blackjack {
      * dealer: card1, card2,..., cardN
      */
     public static String renderResult(Player winner, Player sam, Player dealer) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(winner.getName()).append("\n");
         sb.append(sam.getName()).append(":").append(" ").append(sam.showCards()).append("\n");
         sb.append(dealer.getName()).append(":").append(" ").append(dealer.showCards());
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
     }
@@ -140,7 +154,7 @@ public class Blackjack {
      * Sam or Dealer has lost the game if their total is higher than 21.
      * Sam wins when both players starts with Blackjack.
      * Dealer wins when both players starts with 22 (A + A).
-     * */
+     */
     public static Player findWinner(Player sam, Player dealer) {
         if (sam.isBJ()) {
             return sam;
@@ -156,7 +170,7 @@ public class Blackjack {
         return sam;
     }
 
-    public Player getWinner(){
+    public Player getWinner() {
         return winner;
     }
 

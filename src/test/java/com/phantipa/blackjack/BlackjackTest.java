@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -27,7 +26,7 @@ class BlackjackTest {
         String[] fileName = new String[1];
 
         @Test
-        void testWithBJ_OnlySam_ThenSamWin() throws FileNotFoundException {
+        void testWithBJ_OnlySam_ThenSamWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_bj_onlysam.txt";
 
             String expectedOutput = "sam\n" +
@@ -37,30 +36,21 @@ class BlackjackTest {
             assertEquals(expectedOutput, Blackjack.process(fileName));
         }
 
-        @Test
-        void testWithBJ_OnlyDealer_ThenDealerWin() throws FileNotFoundException {
-            fileName[0] = "test_bj_onlydealer.txt";
-
-            String expectedOutput = "dealer\n" +
-                    "sam: H10, D10 \n" +
-                    "dealer: DA, DK";
-
-            assertEquals(expectedOutput, Blackjack.process(fileName));
-        }
+        //TODO testWithBJ_OnlyDealer_ThenDealerWin()
 
         @Test
-        void testWithBJ_ThenSamWin() throws FileNotFoundException {
+        void testWithBJ_ThenSamWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_bj.txt";
 
             String expectedOutput = "sam\n" +
                     "sam: DA, H10 \n" +
                     "dealer: SA, CJ";
 
-            assertEquals(expectedOutput, Blackjack.process(fileName));            
+            assertEquals(expectedOutput, Blackjack.process(fileName));
         }
 
         @Test
-        void testWithFileAA_ThenDealerWin() throws FileNotFoundException {
+        void testWithFileAA_ThenDealerWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_aa.txt";
 
             String expectedOutput = "dealer\n" +
@@ -71,7 +61,7 @@ class BlackjackTest {
         }
 
         @Test
-        void testWithFileAA_OnlyDealer_ThenSamWin() throws FileNotFoundException {
+        void testWithFileAA_OnlyDealer_ThenSamWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_aa_onlydealer.txt";
 
             String expectedOutput = "sam\n" +
@@ -82,7 +72,7 @@ class BlackjackTest {
         }
 
         @Test
-        void testWithFileSamWin_ThenSamWin() throws FileNotFoundException {
+        void testWithFileSamWin_ThenSamWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_samwin.txt";
 
             String expectedOutput = "sam\n" +
@@ -93,7 +83,7 @@ class BlackjackTest {
         }
 
         @Test
-        void testWithFileDealerWin_ThenDealerWin() throws FileNotFoundException {
+        void testWithFileDealerWin_ThenDealerWin() throws FileNotFoundException, InvalidCardException {
             fileName[0] = "test_dealerwin.txt";
 
             String expectedOutput = "dealer\n" +
@@ -183,13 +173,13 @@ class BlackjackTest {
         String[] str;
 
         @BeforeEach()
-        void initStringArg(){
+        void initStringArg() {
             str = new String[1];
         }
 
         @DisplayName("If no file is provided, a new shuffled deck of 52 unique cards should be initialized.")
         @Test
-        void prepareCards_NoFileNameProvided_InitializedNewCards() throws FileNotFoundException {
+        void prepareCards_NoFileNameProvided_InitializedNewCards() throws FileNotFoundException, InvalidCardException {
             List<Card> cards = Blackjack.prepareCards(new String[0]);
 
             assertNotNull(cards);
@@ -199,7 +189,7 @@ class BlackjackTest {
         @DisplayName("The game should be able to read a file containing a deck of cards, " +
                 "taking the reference to the file as a command line argument, as a starting point.")
         @Test
-        void prepareCards_InvalidFile_ExitProgram() throws FileNotFoundException {
+        void prepareCards_InvalidFile_ExitProgram() throws FileNotFoundException, InvalidCardException {
             str[0] = "test_bj.txt";
 
             List<Card> cards = Blackjack.prepareCards(str);
@@ -217,39 +207,41 @@ class BlackjackTest {
         }
 
         @Test
-        void prepareCards_Missing_ThrowIndexOutOfBoundsException() {
+        void prepareCards_Missing_ThrowInvalidCardException() {
             str[0] = "test_invalid_missing.txt";
 
-            assertThrows(IndexOutOfBoundsException.class,
+            assertThrows(InvalidCardException.class,
                     () -> Blackjack.prepareCards(str));
         }
 
         @Test
-        void prepareCards_Duplicate_ThrowIndexOutOfBoundsException() {
+        void prepareCards_Duplicate_ThrowInvalidCardException() {
             str[0] = "test_invalid_duplicate.txt";
             String[] cardsArr = generateCardsArr();
             cardsArr[0] = "CA";
             cardsArr[1] = "CA";
 
-            assertFalse(Blackjack.isValidCards(cardsArr));
+            assertThrows(InvalidCardException.class,
+                    () -> Blackjack.isValidCards(str));
         }
 
         @Test
-        void prepareCards_CreateCardArrFail(){
+        void prepareCards_CreateCardArrFail() {
             str[0] = "test_invalid.txt";
 
             String[] cardsArr = generateCardsArr();
             cardsArr[0] = "XX";
 
-            assertFalse(Blackjack.isValidCards(cardsArr));
+            assertThrows(InvalidCardException.class,
+                    () -> Blackjack.isValidCards(str));
         }
 
-        private String[] generateCardsArr(){
+        private String[] generateCardsArr() {
             String[] cards = new String[52];
             int i = 0;
             for (String s : SUITS) {
                 for (String v : VALUES) {
-                    cards[i]=s+v;
+                    cards[i] = s + v;
                     i++;
                 }
             }

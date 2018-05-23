@@ -8,18 +8,18 @@ public class Card {
         this.text = text;
 
         String symbol = text.substring(1);
-        try {
+
+        boolean isNumeric = symbol.chars().allMatch( Character::isDigit );
+
+        if(isNumeric){
             value = Integer.parseInt(symbol);
-        } catch (NumberFormatException ex) {
-            if (symbol.length()==1){
-                if (symbol.equals("A")) {
-                    value = 11;
-                } else {
-                    value = 10;
-                }
+        } else {
+            if (symbol.equals("A")) {
+                value = 11;
+            } else {
+                value = 10;
             }
         }
-
     }
 
     public String getText() {
