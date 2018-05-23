@@ -49,7 +49,7 @@ class BlackjackTest {
 
         @Test
         void testWithBJ_ThenSamWin() throws FileNotFoundException, InvalidCardException {
-            fileName[0] = "test_bj.txt";
+            fileName[0] = "test_bj_bothplayer.txt";
 
             String expectedOutput = "sam\n" +
                     "sam: DA, H10 \n" +
@@ -60,7 +60,7 @@ class BlackjackTest {
 
         @Test
         void testWithFileAA_ThenDealerWin() throws FileNotFoundException, InvalidCardException {
-            fileName[0] = "test_aa.txt";
+            fileName[0] = "test_aa_bothplayer.txt";
 
             String expectedOutput = "dealer\n" +
                     "sam: DA, SA \n" +
@@ -206,7 +206,7 @@ class BlackjackTest {
                 "taking the reference to the file as a command line argument, as a starting point.")
         @Test
         void prepareCards_InvalidFile_ExitProgram() throws FileNotFoundException, InvalidCardException {
-            str[0] = "test_bj.txt";
+            str[0] = "test_bj_bothplayer.txt";
 
             List<Card> cards = Blackjack.prepareCards(str);
 
