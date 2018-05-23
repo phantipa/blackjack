@@ -111,7 +111,8 @@ class BlackjackTest {
         @Test
         void findWinner_BJ_SamWin() {
             Sam sam = new Sam(new Card("DA"), new Card("H10"));
-            Dealer dealer = new Dealer(new Card("SA"), new Card("C9"), sam);
+            Dealer dealer = new Dealer(new Card("SA"), new Card("C9"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(sam, Blackjack.findWinner(sam, dealer));
         }
@@ -120,7 +121,8 @@ class BlackjackTest {
         @Test
         void findWinner_BJ_DealerWin() {
             Sam sam = new Sam(new Card("DA"), new Card("H9"));
-            Dealer dealer = new Dealer(new Card("SA"), new Card("C10"), sam);
+            Dealer dealer = new Dealer(new Card("SA"), new Card("C10"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
@@ -129,7 +131,8 @@ class BlackjackTest {
         @Test
         void findWinner_BothBJ_SamWin() {
             Sam sam = new Sam(new Card("DA"), new Card("H10"));
-            Dealer dealer = new Dealer(new Card("SA"), new Card("CJ"), sam);
+            Dealer dealer = new Dealer(new Card("SA"), new Card("CJ"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(sam, Blackjack.findWinner(sam, dealer));
         }
@@ -138,7 +141,8 @@ class BlackjackTest {
         @Test
         void findWinner_BothAA_DealerWin() {
             Sam sam = new Sam(new Card("CA"), new Card("HA"));
-            Dealer dealer = new Dealer(new Card("DA"), new Card("SA"), sam);
+            Dealer dealer = new Dealer(new Card("DA"), new Card("SA"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
@@ -147,7 +151,8 @@ class BlackjackTest {
         @Test
         void findWinner_SamHigherThan21_DealerWin() {
             Sam sam = new Sam(new Card("SA"), new Card("HA"));
-            Dealer dealer = new Dealer(new Card("DA"), new Card("C2"), sam);
+            Dealer dealer = new Dealer(new Card("DA"), new Card("C2"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
@@ -156,7 +161,8 @@ class BlackjackTest {
         @Test
         void findWinner_DealerHigherThan21_SamWin() {
             Sam sam = new Sam(new Card("SA"), new Card("H10"));
-            Dealer dealer = new Dealer(new Card("DA"), new Card("CA"), sam);
+            Dealer dealer = new Dealer(new Card("DA"), new Card("CA"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(sam, Blackjack.findWinner(sam, dealer));
         }
@@ -168,7 +174,8 @@ class BlackjackTest {
             sam.addCard(new Card("D2"));
             sam.addCard(new Card("DA"));
 
-            Dealer dealer = new Dealer(new Card("D9"), new Card("HQ"), sam);
+            Dealer dealer = new Dealer(new Card("D9"), new Card("HQ"));
+            dealer.setSamValue(sam.value);
 
             assertEquals(dealer, Blackjack.findWinner(sam, dealer));
         }
@@ -230,8 +237,7 @@ class BlackjackTest {
             cardsArr[0] = "CA";
             cardsArr[1] = "CA";
 
-            assertThrows(InvalidCardException.class,
-                    () -> Blackjack.isValidCards(str));
+            assertThrows(InvalidCardException.class, () -> Blackjack.isValidCards(str));
         }
 
         @Test
@@ -241,8 +247,7 @@ class BlackjackTest {
             String[] cardsArr = generateCardsArr();
             cardsArr[0] = "XX";
 
-            assertThrows(InvalidCardException.class,
-                    () -> Blackjack.isValidCards(str));
+            assertThrows(InvalidCardException.class, () -> Blackjack.isValidCards(str));
         }
 
         private String[] generateCardsArr() {

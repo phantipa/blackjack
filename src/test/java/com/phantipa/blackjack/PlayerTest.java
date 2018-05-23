@@ -25,14 +25,16 @@ class PlayerTest {
     @Test
     void mustStop_DealerHigherThanSam_True() {
         Sam sam = new Sam(new Card("D10"), new Card("D7"));
-        Dealer dealer = new Dealer(new Card("C10"), new Card("C8"), sam);
+        Dealer dealer = new Dealer(new Card("C10"), new Card("C8"));
+        dealer.setSamValue(sam.value);
         assertTrue(dealer.mustStop());
     }
 
     @Test
     void mustStop_DealerLowerThanSam_False() {
         Sam sam = new Sam(new Card("D10"), new Card("D7"));
-        Dealer dealer = new Dealer(new Card("C10"), new Card("C6"), sam);
+        Dealer dealer = new Dealer(new Card("C10"), new Card("C6"));
+        dealer.setSamValue(sam.value);
         assertFalse(dealer.mustStop());
     }
 }

@@ -33,9 +33,26 @@ public class Blackjack {
 
     /**
      * This method used for processing a single deck of playing cards.
-     * Two players (called Sam and the Dealer) who will play against each other.
-     * each player is given two cards from the top of a shuffled deck of cards.
+     * Two players (are called Sam and the dealer) who will play against each other.
+     * Blackjack is an initial score of 21 with two cards: A + [10, J, Q, K].
+     *
+     * First round:
+     * Each player is given two cards from the top of a shuffled deck of cards.
      * Cards are given in the following order: [sam, dealer, sam, dealer]
+     *
+     * Second round:
+     * If neither player has Blackjack then sam can start drawing cards from the top of the deck.
+     * When sam has stopped drawing cards the dealer can start drawing cards from the top of the deck.
+     *
+     * Must stop rules:
+     * Sam must stop drawing cards from the deck if their total reaches 17 or higher.
+     * The dealer must stop drawing cards when their total is higher than sam.
+     *
+     * Find winner rules:
+     * Check if either player has Blackjack with their initial hand (first round) and wins the game.
+     * Sam wins when both players starts with Blackjack.
+     * Dealer wins when both players starts with 22 (A + A).
+     * Sam or Dealer has lost the game if their total is higher than 21.
      */
     public static String process(String args[]) throws FileNotFoundException, InvalidCardException {
         List<Card> cards = prepareCards(args);
@@ -43,19 +60,21 @@ public class Blackjack {
         //First round
         int cardIdx = 4;
         Sam sam = new Sam(cards.get(0), cards.get(2));
-        Dealer dealer = new Dealer(cards.get(1), cards.get(3), sam);
+        Dealer dealer = new Dealer(cards.get(1), cards.get(3));
 
-        //Sam turn
+        //Second round: Sam turn
         while (!sam.mustStop() && !dealer.isBJ()) {
             sam.addCard(cards.get(cardIdx++));
         }
 
-        //Dealer turn
-        while (!dealer.mustStop()) {
+        //Second round: Dealer turn
+        dealer.setSamValue(sam.value);
+        while (!dealer.mustStop() && !sam.isBJ()) {
             dealer.addCard(cards.get(cardIdx++));
         }
 
         winner = findWinner(sam, dealer);
+
         return renderResult(winner, sam, dealer);
     }
 
@@ -119,6 +138,7 @@ public class Blackjack {
 
     /**
      * This method used for validating cards.
+     * @throws InvalidCardException  if cards mismatch or found duplicate cards
      */
     public static boolean isValidCards(String[] cardTexts) throws InvalidCardException {
         HashSet<String> set = new HashSet<>();
@@ -152,11 +172,6 @@ public class Blackjack {
         return sb.toString();
     }
 
-    /**
-     * Sam or Dealer has lost the game if their total is higher than 21.
-     * Sam wins when both players starts with Blackjack.
-     * Dealer wins when both players starts with 22 (A + A).
-     */
     public static Player findWinner(Player sam, Player dealer) {
         if (sam.isBJ()) {
             return sam;
@@ -170,10 +185,6 @@ public class Blackjack {
         }
 
         return sam;
-    }
-
-    public Player getWinner() {
-        return winner;
     }
 
 }

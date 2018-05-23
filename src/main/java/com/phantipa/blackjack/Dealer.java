@@ -2,22 +2,26 @@ package com.phantipa.blackjack;
 
 public class Dealer extends Player{
 
-    private Player sam;
+    public void setSamValue(Integer samValue) {
+        this.samValue = samValue;
+    }
 
-    public Dealer(Card card1, Card card2, Player sam){
+    private Integer samValue;
+
+    public Dealer(Card card1, Card card2){
         super("dealer", card1, card2);
-        this.sam = sam;
     }
 
     @Override
     public boolean mustStop(){
-        if (isBJ() || isAA() || sam.isBJ() || sam.getValue() > 21) {
+        if (isBJ() || isAA() || samValue > 21) {
             return true;
         }
-        if (getValue() <= sam.getValue()) {
+        if (getValue() <= samValue) {
             return false;
         }
         return true;
+
     }
 
 }
