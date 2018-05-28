@@ -8,10 +8,7 @@ public class Sam extends Player {
 
     @Override
     public boolean mustStop() {
-        if (getValue() < 17) {
-            return false;
-        }
-        return true;
+        return getValue() >= 17;
     }
 
 }

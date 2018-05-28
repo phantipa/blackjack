@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Blackjack {
 
@@ -15,19 +16,21 @@ public class Blackjack {
     private static final String[] SUITS = {"C", "D", "H", "S"};
     private static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
     private static final int CARDS_SIZE = 52;
-    private static Player winner;
+    private static final Logger LOGGER = Logger.getLogger(Blackjack.class.getName());
 
     /**
      * This method presented summary of Blackjack including input, process and output.
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
-            String output = process(args);
-            System.out.println(output);
+            StringBuilder newLine = new StringBuilder();
+            newLine.append(System.getProperty("line.separator")).append(process(args));
+            String output = newLine.toString();
+            LOGGER.info(output);
         } catch (FileNotFoundException ex) {
-            System.out.println("File not found.");
+            LOGGER.severe("File not found.");
         } catch (InvalidCardException ex) {
-            System.out.println(ex.toString());
+            LOGGER.severe(ex.toString());
         }
     }
 
@@ -35,27 +38,28 @@ public class Blackjack {
      * This method used for processing a single deck of playing cards.
      * Two players (are called Sam and the dealer) who will play against each other.
      * Blackjack is an initial score of 21 with two cards: A + [10, J, Q, K].
-     *
+     * <p>
      * First round:
      * Each player is given two cards from the top of a shuffled deck of cards.
      * Cards are given in the following order: [sam, dealer, sam, dealer]
-     *
+     * <p>
      * Second round:
      * If neither player has Blackjack then sam can start drawing cards from the top of the deck.
      * When sam has stopped drawing cards the dealer can start drawing cards from the top of the deck.
-     *
+     * <p>
      * Must stop rules:
      * Sam must stop drawing cards from the deck if their total reaches 17 or higher.
      * The dealer must stop drawing cards when their total is higher than sam.
-     *
+     * <p>
      * Find winner rules:
      * Check if either player has Blackjack with their initial hand (first round) and wins the game.
      * Sam wins when both players starts with Blackjack.
      * Dealer wins when both players starts with 22 (A + A).
      * Sam or Dealer has lost the game if their total is higher than 21.
      */
-    public static String process(String args[]) throws FileNotFoundException, InvalidCardException {
+    public static String process(String[] args) throws FileNotFoundException, InvalidCardException {
         List<Card> cards = prepareCards(args);
+        Player winner;
 
         //First round
         int cardIdx = 4;
@@ -102,7 +106,7 @@ public class Blackjack {
         }
 
         if (cards.size() != CARDS_SIZE) {
-            throw new InvalidCardException("Cards size is not equal 52.", CardErrorCode.CARD_MISSING);
+            throw new InvalidCardException("Cards size is not equal 52.");
         }
 
         return cards;
@@ -129,25 +133,26 @@ public class Blackjack {
     }
 
     private static void createValidCards(List<Card> cards, String[] cardTexts) throws InvalidCardException {
-        if (isValidCards(cardTexts)) {
-            for (String text : cardTexts) {
-                cards.add(new Card(text));
-            }
+        isValidCards(cardTexts);
+
+        for (String text : cardTexts) {
+            cards.add(new Card(text));
         }
     }
 
     /**
      * This method used for validating cards.
-     * @throws InvalidCardException  if cards mismatch or found duplicate cards
+     *
+     * @throws InvalidCardException if cards mismatch or found duplicate cards
      */
     public static boolean isValidCards(String[] cardTexts) throws InvalidCardException {
         HashSet<String> set = new HashSet<>();
 
         for (String card : cardTexts) {
             if (!card.matches(CARD_PATTERN_REGEX)) {
-                throw new InvalidCardException("Found format mismatch card: " + card, CardErrorCode.CARD_MISMATCH);
+                throw new InvalidCardException("Found format mismatch card: " + card);
             } else if (!set.add(card)) {
-                throw new InvalidCardException("Found duplicate cards: " + card, CardErrorCode.CARD_DUPLICATE);
+                throw new InvalidCardException("Found duplicate cards: " + card);
             }
         }
 
@@ -176,6 +181,7 @@ public class Blackjack {
         if (sam.isBJ()) {
             return sam;
         }
+
         if (sam.isAA()) {
             return dealer;
         }

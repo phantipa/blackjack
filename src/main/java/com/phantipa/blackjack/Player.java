@@ -27,7 +27,7 @@ abstract class Player {
 
 
     public String showCards() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for(Card card : cards) {
             sb.append(card.getText()).append(",").append(" ");
